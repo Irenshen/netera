@@ -24,6 +24,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  if (document.querySelector(".convert-items")) {
+    const btnChanges = document.querySelectorAll(".btn-change");
+    btnChanges.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        this.classList.toggle("rotate");
+        const convertItems = this.closest(".convert-items");
+        convertItems.classList.toggle("reverse");
+      });
+    });
+  }
+
   //burger-account menu
   if (document.querySelector(".account__burger")) {
     document
@@ -85,7 +96,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 $(document).ready(function () {
-  //select
   $(".select").each(function () {
     const _this = $(this),
       selectOption = _this.find("option"),
@@ -97,6 +107,7 @@ $(document).ready(function () {
     $("<div>", {
       class: "new-select",
       text: _this.children("option:selected").text(),
+      attr: { "data-value": "Bitcoin" }, // add default value
     }).insertAfter(_this);
 
     const selectHead = _this.next(".new-select");
@@ -121,9 +132,8 @@ $(document).ready(function () {
         html: $("<span>", {
           text: selectOption.eq(i).text(),
         }),
-      })
-      .attr("data-value", selectOption.eq(i).val())
-      .appendTo(listContainer);
+        attr: { "data-value": selectOption.eq(i).text() || "Bitcoin" }, // add default value
+      }).appendTo(listContainer);
     }
 
     const selectItem = listContainer.find(".new-select__item");
@@ -138,17 +148,19 @@ $(document).ready(function () {
           searchInput.on("keyup", function () {
             const searchTerm = $(this).val().toLowerCase();
             selectItem.hide();
-            selectItem.filter(function () {
-              return $(this).text().toLowerCase().indexOf(searchTerm) > -1;
-            }).show();
+            selectItem
+              .filter(function () {
+                return $(this).text().toLowerCase().indexOf(searchTerm) > -1;
+              })
+              .show();
           });
         }
 
         selectItem.on("click", function () {
-          let chooseItem = $(this).data("value");
+          let chooseItem = $(this).text();
 
           $("select").val(chooseItem).attr("selected", "selected");
-          selectHead.text($(this).find("span").text());
+          selectHead.text(chooseItem);
           selectHead.attr("data-value", chooseItem);
 
           selectList.slideUp(duration);
